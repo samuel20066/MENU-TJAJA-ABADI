@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Tjahaja Abadi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 pb-28">
+
+    <header class="bg-[#8B0000] text-white p-6 rounded-b-[40px] shadow-xl sticky top-0 z-50">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter">TJAHAJA ABADI</h1>
+                <p class="text-xs font-medium opacity-90 mt-1 uppercase tracking-widest">Self-Order System • Meja 05</p>
+            </div>
+            <div class="bg-yellow-400 text-[#8B0000] h-12 w-12 rounded-2xl flex items-center justify-center shadow-inner">
+                <i class="fas fa-store text-xl"></i>
+            </div>
+        </div>
+    </header>
+
+    <nav class="flex overflow-x-auto p-4 gap-2 no-scrollbar sticky top-24 bg-gray-50/90 backdrop-blur-md z-40">
+        <a href="#mie" class="px-5 py-2 bg-red-600 text-white rounded-xl text-sm font-bold shadow-md whitespace-nowrap">Mie & Telur</a>
+        <a href="#nasi" class="px-5 py-2 bg-white border rounded-xl text-sm font-bold whitespace-nowrap">Nasi</a>
+        <a href="#roti" class="px-5 py-2 bg-white border rounded-xl text-sm font-bold whitespace-nowrap">Roti Bakar</a>
+        <a href="#snack" class="px-5 py-2 bg-white border rounded-xl text-sm font-bold whitespace-nowrap">Snack</a>
+        <a href="#pancong" class="px-5 py-2 bg-white border rounded-xl text-sm font-bold whitespace-nowrap">Pancong</a>
+        <a href="#ketan" class="px-5 py-2 bg-white border rounded-xl text-sm font-bold whitespace-nowrap">Ketan Susu</a>
+    </nav>
+
+    <div id="menu-container" class="px-4 space-y-8">
+        </div>
+
+    <div id="cart-bar" class="fixed bottom-6 left-4 right-4 bg-white p-4 rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.2)] border border-gray-100 hidden z-50">
+        <div class="flex justify-between items-center max-w-md mx-auto">
+            <div>
+                <span id="total-qty" class="bg-red-100 text-red-600 px-2 py-1 rounded-lg text-xs font-black">0 ITEMS</span>
+                <p id="total-price" class="text-xl font-black text-gray-800">Rp 0</p>
+            </div>
+            <button onclick="checkout()" class="bg-[#8B0000] text-white px-8 py-3 rounded-2xl font-bold active:scale-95 transition-transform">
+                Pesan <i class="fas fa-chevron-right ml-2 text-xs"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // DATA SEMUA MENU DARI FOTO
+        const menuData = {
+            "Mie & Telur": [
+                { name: "Mie Dok Dok (Kuah)", price: 17000 },
+                { name: "Mie Habib (Goreng)", price: 17000 },
+                { name: "Mie Bangladesh (Kuah)", price: 20000 },
+                { name: "Mie Carbonara", price: 20000 },
+                { name: "Mie Ramen", price: 18000 },
+                { name: "Mie Double", price: 12000 },
+                { name: "Mie Polos", price: 8000 },
+                { name: "Omlet", price: 13000 }
+            ],
+            "Nasi": [
+                { name: "Nasi Dadar Cryspi", price: 13000 },
+                { name: "Nasi Ceplok Pontianak", price: 13000 },
+                { name: "Nasi Dadar Kornet", price: 15000 },
+                { name: "Nasi Dadar Kornet Sosis", price: 16000 },
+                { name: "Nasi Telur Orak Arik", price: 12000 },
+                { name: "Nasi Telur Negro", price: 12000 },
+                { name: "Nasi Mentega Telur Sosis", price: 18000 },
+                { name: "Magelangan", price: 20000 },
+                { name: "Magelangan Sosis", price: 22000 }
+            ],
+            "Pancong Tjahyadi": [
+                { name: "Pancong Susu", price: 10000 },
+                { name: "Pancong Coklat Susu", price: 12000 },
+                { name: "Pancong Keju Susu", price: 14000 },
+                { name: "Pancong Keju Coklat Susu", price: 16000 },
+                { name: "Pancong Ovaltine Keju Susu", price: 16000 },
+                { name: "Pancong Milo Keju Susu", price: 16000 },
+                { name: "Pancong Oreo Keju Susu", price: 18000 },
+                { name: "Pancong Matcha Keju Susu", price: 18000 },
+                { name: "Pancong Ovomaltine Keju Susu", price: 20000 }
+            ],
+            "Tjahaja Signature": [
+                { name: "Badak", price: 22000 },
+                { name: "Coffee Beer", price: 17000 },
+                { name: "Kopi Susu Tjahyadi", price: 20000 },
+                { name: "Coklat Tjahyadi", price: 17000 },
+                { name: "Matcha Tjahyadi", price: 17000 }
+            ]
+        };
+
+        let cart = [];
+
+        function renderMenu() {
+            const container = document.getElementById('menu-container');
+            for (const [category, items] of Object.entries(menuData)) {
+                let section = `<div><h2 class="text-xl font-black text-gray-800 mb-4 border-l-4 border-red-600 pl-3">${category}</h2><div class="grid gap-3">`;
+                
+                items.forEach(item => {
+                    section += `
+                        <div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border border-gray-100">
+                            <div>
+                                <h3 class="font-bold text-gray-700">${item.name}</h3>
+                                <p class="text-red-600 font-extrabold text-sm">Rp ${item.price.toLocaleString('id-ID')}</p>
+                            </div>
+                            <button onclick="addToCart('${item.name}', ${item.price})" class="bg-gray-100 hover:bg-red-600 hover:text-white transition-all h-10 w-10 rounded-xl flex items-center justify-center text-xl font-bold">+</button>
+                        </div>
+                    `;
+                });
+                
+                section += `</div></div>`;
+                container.innerHTML += section;
+            }
+        }
+
+        function addToCart(name, price) {
+            cart.push({ name, price });
+            const cartBar = document.getElementById('cart-bar');
+            cartBar.classList.remove('hidden');
+            
+            document.getElementById('total-qty').innerText = `${cart.length} ITEMS`;
+            const total = cart.reduce((acc, curr) => acc + curr.price, 0);
+            document.getElementById('total-price').innerText = `Rp ${total.toLocaleString('id-ID')}`;
+        }
+
+        function checkout() {
+            const total = cart.reduce((acc, curr) => acc + curr.price, 0);
+            alert(`Pesanan Berhasil!\nTotal: Rp ${total.toLocaleString('id-ID')}\nSilakan tunjukkan layar ini atau langsung ke kasir setelah selesai makan.`);
+            cart = [];
+            document.getElementById('cart-bar').classList.add('hidden');
+        }
+
+        renderMenu();
+    </script>
+</body>
+</html>
